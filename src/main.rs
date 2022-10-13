@@ -16,22 +16,24 @@ fn main() {
     }
     
     println!("freespace_wiper",);
-    writer_loop(&temp_file_path);
+    let write_byte = b"11111111";
+    writer_loop(&temp_file_path, write_byte);
     
     println!("Program finished.");
 }
 
-fn writer_loop(temp_file_path:&std::path::PathBuf) {
+fn writer_loop(temp_file_path:&std::path::PathBuf, write_byte:&[u8]) {
     // Open a file in write-only (ignoring errors).
     // This creates the file if it does not exist (and empty the file if it exists).
     println!("Creating temporary file: {}", temp_file_path.display());
     let mut file = File::create(&temp_file_path).unwrap();
     
+
     // Write to file until we get file i/o error
     let mut not_finished=true;
     while not_finished {
         
-        if let Err(e) = file.write(b"11111111") {
+        if let Err(e) = file.write(write_byte) {
             println!("File i/o-error. {} This is expected, and file probably filled whole hard disk and rewrite was succesfull.", e);
             println!("Deleting file...");
             if let Err(e) = remove_file(temp_file_path) {
